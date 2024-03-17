@@ -1,4 +1,4 @@
-# Poast
+# Poast (gpt-pilot built)
 
 Poast is a minimalist web application inspired by Twitter, designed for users to share text content with support for markdown formatting. It allows for posting, viewing, starring, commenting on posts, and reposting, alongside profile customization without the need for signup.
 
