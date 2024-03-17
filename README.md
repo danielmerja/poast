@@ -30,4 +30,9 @@ The application is built using the Node.js platform with Express framework, leve
 
 ### License
 
+<<<<<<< HEAD
 Copyright (c) 2024.
+=======
+MIT
+
+>>>>>>> b21479dd108437ac1448be8e9a53690967702d32
