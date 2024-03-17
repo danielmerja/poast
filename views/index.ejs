@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/_head.ejs') %>
+  <body>
+<%- include('partials/_header.ejs') %>
+    <main role="main" class="container mt-4">
+      <div class="text-center">
+        <h1>poast</h1>
+        <form action="/post" method="POST">
+          <div class="form-group">
+            <label for="content">Post Content:</label>
+            <textarea name="content" id="content" rows="4" class="form-control" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="markdown">Markdown Formatting:</label>
+            <input type="checkbox" name="markdown" id="markdown">
+            <small class="form-text text-muted">Check to enable markdown formatting for inline code and code blocks.</small>
+          </div>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit" class="btn btn-primary">Create Post</button>
+        </form>
+        <% if (posts && posts.length > 0) { %>
+          <% posts.forEach(function(post) { %>
+            <div class="post mt-4">
+              <h2><%= post.username %></h2>
+              <p><%= post.content %></p>
+              <small>Posted on <%= new Date(post.timestamp).toLocaleString() %></small>
+              <div>
+                <button class="btn btn-primary star-btn" data-post-id="<%= post._id %>">Star</button>
+                <span>Stars: <span class="star-count"><%= post.stars %></span></span>
+              </div>
+              <div data-post-comments="<%= post._id %>">
+                <form class="comment-form" data-post-id="<%= post._id %>">
+                  <input type="text" name="comment" placeholder="Write a comment..." required>
+                  <button type="submit" class="btn btn-secondary">Comment</button>
+                </form>
+              </div>
+              <div>
+                <button class="btn btn-info repost-btn" data-post-id="<%= post._id %>">Repost</button>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <p>No posts to display</p>
+        <% } %>
+      </div>
+    </main>
+  </body>
+<%- include('partials/_footer.ejs') %>
+  <script src="/js/main.js"></script>
+  <script>
+    document.querySelectorAll('.star-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const postId = this.getAttribute('data-post-id');
+        fetch('/post/star/' + postId, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': '<%= csrfToken %>' // Add CSRF token in request headers
+          },
+          body: '{}' // Ensure body is present even if empty
+        }).then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if(data.success) {
+            const countElement = button.nextElementSibling.querySelector('.star-count');
+            countElement.textContent = parseInt(countElement.textContent) + 1;
+          } else {
+            console.error('Error starring post:', data.message);
+          }
+        }).catch(error => {
+          console.error('Error starring post:', error);
+        });
+      });
+    });
+
+    document.querySelectorAll('.comment-form').forEach(form => {
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const postId = this.getAttribute('data-post-id');
+        const formData = new FormData(this);
+        const comment = formData.get('comment');
+        fetch('/post/comment/' + postId, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': '<%= csrfToken %>' // Add CSRF token in request headers
+          },
+          body: JSON.stringify({ comment: comment })
+        }).then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if(data.success) {
+            console.log('Comment added successfully');
+            // Append comment to post without reloading the page
+            const commentSection = document.querySelector(`[data-post-comments="${postId}"]`);
+            const newComment = document.createElement('div');
+            newComment.textContent = comment; // Simplified for demonstration
+            commentSection.appendChild(newComment);
+          } else {
+            console.error('Error adding comment:', data.message);
+          }
+        }).catch(error => {
+          console.error('Error adding comment:', error);
+        });
+      });
+    });
+
+    document.querySelectorAll('.repost-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const postId = this.getAttribute('data-post-id');
+        fetch('/post/repost/' + postId, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': '<%= csrfToken %>' // Add CSRF token in request headers
+          },
+          body: '{}' // Ensure body is present even if empty
+        }).then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if(data.success) {
+            console.log('Post reposted successfully');
+            // Handle repost UI update (e.g., show notification, reload posts)
+            alert('Post reposted successfully.');
+            location.reload(); // Simplified approach to reload posts
+          } else {
+            console.error('Error reposting post:', data.message);
+          }
+        }).catch(error => {
+          console.error('Error reposting post:', error);
+        });
+      });
+    });
+  </script>
+</html>

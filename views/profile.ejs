@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/_head.ejs') %>
+  <body>
+<%- include('partials/_header.ejs') %>
+    <main role="main" class="container mt-5">
+      <div class="text-center">
+        <h1 class="mb-4">User Profile</h1>
+        <h2 class="mb-3">Username: <%= user.username %></h2>
+        <div class="mb-3">
+          <% if (user.profilePicture) { %>
+            <img src="<%= user.profilePicture %>" alt="Profile Picture" class="img-thumbnail" style="max-width: 200px;">
+          <% } else { %>
+            <p>No profile picture uploaded</p>
+          <% } %>
+        </div>
+        <form action="/profile/avatar" method="POST" enctype="multipart/form-data" class="mb-4">
+          <div class="mb-3">
+            <label for="profilePicture" class="form-label">Upload Profile Picture:</label>
+            <input type="file" name="avatar" id="profilePicture" class="form-control">
+          </div>
+          <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+      </div>
+    </main>
+  </body>
+<%- include('partials/_footer.ejs') %>
+</html>

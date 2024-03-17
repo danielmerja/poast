@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('partials/_head.ejs') %>
+  <body>
+<%- include('partials/_header.ejs') %>
+    <main role="main" class="container mt-4">
+      <div class="text-center">
+        <h1>Create a New Post</h1>
+        <form action="/post" method="POST">
+          <div class="form-group">
+            <label for="content">Post Content:</label>
+            <textarea name="content" id="content" rows="4" class="form-control" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="markdown">Markdown Formatting:</label>
+            <input type="checkbox" name="markdown" id="markdown"> <!-- Checkbox for enabling markdown -->
+            <small class="form-text text-muted">Check to enable markdown formatting for inline code and code blocks.</small>
+          </div>
+          <button type="submit" class="btn btn-primary">Create Post</button>
+        </form>
+      </div>
+    </main>
+  </body>
+<%- include('partials/_footer.ejs') %>
+</html>
