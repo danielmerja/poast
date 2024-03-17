@@ -30,4 +30,4 @@ The application is built using the Node.js platform with Express framework, leve
 
 ### License
 
-Copyright (c) 2024.
+MIT
